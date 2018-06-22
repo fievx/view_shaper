@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="TicketLayout">
+    <declare-styleable name="ShapedLayout">
         <attr name="android:layout_height"/>
         <attr name="android:layout_width"/>
+        <attr name="elevation" format="dimension"/>
     </declare-styleable>
 
 </resources>

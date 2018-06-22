@@ -1,11 +1,8 @@
 package com.example.denais.testapplication
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.widget.Button
-import com.example.denais.testapplication.shapedlayout.TicketLayout
+import com.example.denais.testapplication.shapedlayout.ShapedLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,7 +11,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.fragment_list)
 
-        val ticket = findViewById<TicketLayout>(R.id.ticket)
+        val ticket = findViewById<ShapedLayout>(R.id.ticket)
 
 //        findViewById<Button>(R.id.bt_rotate).setOnClickListener{
 //            ObjectAnimator.ofFloat(0f, 1f).apply {

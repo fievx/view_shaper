@@ -4,17 +4,15 @@ import android.content.Context
 import android.graphics.*
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
-import android.widget.FrameLayout
-import com.example.denais.testapplication.R
 
-class TicketShapedView @JvmOverloads constructor(
+class ShapedView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout (context, attrs, defStyleAttr) {
 
-    var shapePath: Path
+    lateinit var shapePath: Path
+    lateinit var shaper: Shaper
 
     init {
-        shapePath = getPath()
         setWillNotDraw(false)
     }
 
@@ -24,9 +22,7 @@ class TicketShapedView @JvmOverloads constructor(
     }
 
     private fun getPath(): Path {
-        val radius = context.resources.getDimensionPixelSize(R.dimen.corner_radius)
-        val elevation = 50f
-        return TicketShaper.getShape(height, width, radius.toFloat(), elevation)
+        return shaper.getPath(width, height)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

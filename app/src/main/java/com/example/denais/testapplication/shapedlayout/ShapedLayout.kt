@@ -5,7 +5,6 @@ import android.graphics.*
 import android.os.Build
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
-import com.example.denais.testapplication.R
 import android.renderscript.Allocation
 import android.renderscript.ScriptIntrinsicBlur
 import android.renderscript.RenderScript
@@ -13,24 +12,23 @@ import android.graphics.Color.BLACK
 import android.graphics.Color.TRANSPARENT
 import android.graphics.Paint.ANTI_ALIAS_FLAG
 import android.renderscript.Element
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
-import org.w3c.dom.Attr
+import com.example.denais.testapplication.R
 
 
-class TicketLayout @JvmOverloads constructor(
+abstract class ShapedLayout @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : FrameLayout (context, attrs, defStyleAttr) {
+) : ConstraintLayout (context, attrs, defStyleAttr) {
 
     private var shadow: Bitmap? = null
     private val shadowPaint = Paint(ANTI_ALIAS_FLAG)
     private val shadowRadius = 10f
+    private var shadowOffset = 0f
 
-    private val foreground: TicketShapedView
+    private val foreground: ShapedView
     private val shadowView: ImageView
 
     var isShadowDirty = true
@@ -39,28 +37,39 @@ class TicketLayout @JvmOverloads constructor(
 
     init {
         shadowPaint.colorFilter = PorterDuffColorFilter(BLACK, PorterDuff.Mode.SRC_IN)
-        shadowPaint.alpha = 200 // 20%
+        shadowPaint.alpha = 200
+
+        val arr = context.obtainStyledAttributes(attrs, R.styleable.ShapedLayout)
+        val elevation = arr.getDimensionPixelSize(R.styleable.ShapedLayout_elevation, 0)
+        shadowOffset = arr.getDimension(R.styleable.ShapedLayout_elevation, 0f)
 
         shadowView = ImageView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
-                topMargin = 10
-            }
+            layoutParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
         addView(shadowView)
 
-        foreground = TicketShapedView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        foreground = ShapedView(context).apply {
+            shaper = getShaper()
         }
-        addView(foreground)
+        val foregroundParams = ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                .apply {
+                    leftMargin = elevation
+                    topMargin = elevation
+                    rightMargin = elevation
+                    bottomMargin = elevation
+                }
+        addView(foreground, foregroundParams)
 
         containerReady = true
 
         setWillNotDraw(false)
+        arr.recycle()
 
     }
 
-    override fun addView(child: View?) {
+    abstract fun getShaper(): Shaper
+
+    final override fun addView(child: View?) {
         if (containerReady) {
             foreground.addView(child)
         } else {
@@ -78,7 +87,7 @@ class TicketLayout @JvmOverloads constructor(
 
     override fun addView(child: View?, params: ViewGroup.LayoutParams?) {
         if (containerReady) {
-            foreground.addView(child, getForegroundLayoutParams(params = params as LayoutParams))
+            foreground.addView(child, params)
         } else {
             super.addView(child, params)
         }
@@ -94,29 +103,10 @@ class TicketLayout @JvmOverloads constructor(
 
     override fun addView(child: View?, index: Int, params: ViewGroup.LayoutParams?) {
         if (containerReady) {
-            foreground.addView(child, index, getForegroundLayoutParams(params = params as LayoutParams))
+            foreground.addView(child, index, params)
         } else {
             super.addView(child, index, params)
         }
-    }
-
-    private fun getForegroundLayoutParams(params: LayoutParams): ViewGroup.LayoutParams{
-        //we get the proper AttributeSet
-        val id = params.id
-        val attrs = attrMap[id]
-        val arr = context.obtainStyledAttributes(attrs, R.styleable.TicketLayout)
-        if (arr.hasValue(R.styleable.TicketLayout_android_layout_height) && arr.hasValue(R.styleable.TicketLayout_android_layout_width)) {
-            return foreground.generateLayoutParams(attrMap[id])
-        } else {
-            return generateDefaultLayoutParams()
-        }
-    }
-
-    val attrMap = HashMap<Int, AttributeSet?>()
-
-    override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
-        attrMap[getIdFromAttrs(context, attrs)] = attrs
-        return LayoutParams(context, attrs)
     }
 
     override fun draw(canvas: Canvas) {
@@ -139,7 +129,10 @@ class TicketLayout @JvmOverloads constructor(
                 shadow?.eraseColor(TRANSPARENT)
             }
             val c = Canvas(shadow)
-            c.drawPath(foreground.shapePath, shadowPaint)
+            val shadowPath = getShaper().getPath(foreground.width, foreground.height).apply {
+                offset(shadowOffset, shadowOffset)
+            }
+            c.drawPath(shadowPath, shadowPaint)
 
             val rs = RenderScript.create(context)
             val blur = ScriptIntrinsicBlur.create(rs, Element.U8(rs))
@@ -159,25 +152,8 @@ class TicketLayout @JvmOverloads constructor(
         }
     }
 
-    override fun setRotationY(rotationY: Float) {
-        Log.d(TAG, "Current rotation = $rotationY")
-        super.setRotationY(rotationY)
-    }
-
     companion object {
-        val TAG = "TicketView"
-
-        fun getIdFromAttrs(c: Context, attrs: AttributeSet):Int{
-            val attrsArray = intArrayOf(android.R.attr.id)
-            val arr = c.obtainStyledAttributes(attrs, attrsArray)
-            val id = arr.getResourceId(0, View.NO_ID)
-            arr.recycle()
-            return id
-        }
+        val TAG = "ShapedView"
     }
 
-    inner class LayoutParams(c: Context, attrs: AttributeSet) : FrameLayout.LayoutParams(c, attrs) {
-        val id: Int = getIdFromAttrs(c, attrs)
-
-    }
 }

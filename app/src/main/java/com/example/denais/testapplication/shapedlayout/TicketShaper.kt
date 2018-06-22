@@ -3,12 +3,13 @@ package com.example.denais.testapplication.shapedlayout
 import android.graphics.Path
 import android.graphics.RectF
 
-object TicketShaper {
+class TicketShaper(val cornerRadius: Float, val elevation: Float): Shaper {
 
-    fun getShape(height: Int, width: Int, cornerRadius: Float, elevation: Float): Path {
+    override fun getPath(width: Int, height: Int): Path {
         return Path().apply {
-            val cutoutWidth = width / 8f
-            val cutoutHeight = cutoutWidth
+            val cutoutRadius = 50f
+            val cutoutWidth = if (cutoutRadius != 0f) cutoutRadius else width / 8f
+            val cutoutHeight = 3 * cutoutWidth / 4
 
             val padding = elevation
             val pathLeft = padding
@@ -33,7 +34,7 @@ object TicketShaper {
             lineTo(pathRight - cornerRadius, pathTop)
 
             //top right corner
-            arcTo(RectF(pathRight - cornerRadius *2 , pathTop, pathRight, pathTop + cornerRadius *2), 270f, 90f)
+            arcTo(RectF(pathRight - cornerRadius * 2, pathTop, pathRight, pathTop + cornerRadius * 2), 270f, 90f)
             lineTo(pathRight, pathBottom - cornerRadius)
 
             //bottom right corner
