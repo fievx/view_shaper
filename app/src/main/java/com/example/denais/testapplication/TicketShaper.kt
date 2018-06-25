@@ -1,7 +1,8 @@
-package com.example.denais.testapplication.shapedlayout
+package com.example.denais.testapplication
 
 import android.graphics.Path
 import android.graphics.RectF
+import com.example.denais.viewshaper.shapedlayout.Shaper
 
 class TicketShaper(val cornerRadius: Float, val elevation: Float): Shaper {
 

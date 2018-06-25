@@ -2,7 +2,7 @@ package com.example.denais.testapplication
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.example.denais.testapplication.shapedlayout.ShapedLayout
+import com.example.denais.viewshaper.shapedlayout.ShapedLayout
 
 class MainActivity : AppCompatActivity() {
 

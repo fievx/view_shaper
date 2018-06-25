@@ -1,4 +1,4 @@
-package com.example.denais.testapplication.shapedlayout
+package com.example.denais.viewshaper.shapedlayout
 
 import android.graphics.Path
 
