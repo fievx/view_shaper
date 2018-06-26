@@ -5,7 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.widget.FrameLayout
 
-class ShapedView @JvmOverloads constructor(
+internal class ShapedView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout (context, attrs, defStyleAttr) {
 

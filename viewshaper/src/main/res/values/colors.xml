@@ -2,5 +2,5 @@
 <resources>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
-    <color name="shadow">#80000000</color>
+    <color name="shadow_default_color">#80000000</color>
 </resources>

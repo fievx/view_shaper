@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="shadow_default_radius">2dp</dimen>
+    <dimen name="shadow_default_x_translation">2dp</dimen>
+    <dimen name="shadow_default_y_translation">2dp</dimen>
+</resources>

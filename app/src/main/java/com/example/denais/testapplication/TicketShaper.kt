@@ -4,7 +4,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.example.denais.viewshaper.shapedlayout.Shaper
 
-class TicketShaper(val cornerRadius: Float, val elevation: Float): Shaper {
+class TicketShaper(val cornerRadius: Float): Shaper {
 
     override fun getPath(width: Int, height: Int): Path {
         return Path().apply {
@@ -12,7 +12,7 @@ class TicketShaper(val cornerRadius: Float, val elevation: Float): Shaper {
             val cutoutWidth = if (cutoutRadius != 0f) cutoutRadius else width / 8f
             val cutoutHeight = 3 * cutoutWidth / 4
 
-            val padding = elevation
+            val padding = 0f
             val pathLeft = padding
             val pathRight = width - padding
             val pathTop = padding

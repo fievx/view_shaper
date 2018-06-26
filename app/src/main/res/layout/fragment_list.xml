@@ -9,11 +9,15 @@
         android:id="@+id/ticket"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:elevation="4dp">
+        android:layout_margin="30dp"
+        app:has_shadow="true"
+        app:padding="30dp"
+        >
 
         <android.support.constraint.ConstraintLayout
             android:layout_height="match_parent"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+            >
 
             <ImageView
                 android:layout_width="0dp"

@@ -11,7 +11,7 @@ class TicketViewShaper @JvmOverloads constructor(
 
     var ticketShaper: Shaper
     init {
-        ticketShaper = TicketShaper(30f, 10f)
+        ticketShaper = TicketShaper(30f)
         onShapeReady()
     }
     override fun getShaper(): Shaper? {

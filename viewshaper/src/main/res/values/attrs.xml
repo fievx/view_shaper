@@ -3,7 +3,13 @@
     <declare-styleable name="ViewShaper">
         <attr name="android:layout_height"/>
         <attr name="android:layout_width"/>
-        <attr name="elevation" format="dimension"/>
+        <attr name="shadow_offset" format="dimension"/>
+        <attr name="shadow_x_offset" format="dimension"/>
+        <attr name="shadow_y_offset" format="dimension"/>
+        <attr name="shadow_radius" format="dimension"/>
+        <attr name="has_shadow" format="boolean"/>
+        <attr name="shadow_color" format="color"/>
+        <attr name="padding" format="dimension"/>
     </declare-styleable>
 
 </resources>

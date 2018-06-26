@@ -1,5 +1,6 @@
 package com.example.denais.viewshaper.shapedlayout
 
+import android.animation.ObjectAnimator
 import android.content.Context
 
 
@@ -20,12 +21,17 @@ abstract class ViewShaper @JvmOverloads constructor(
 
     private var shadow: Bitmap? = null
     private val shadowPaint = Paint(ANTI_ALIAS_FLAG)
-    private val shadowRadius = 10f
-    private var shadowOffset = 0f
+
+    private var shadowRadius = context.resources.getDimension(R.dimen.shadow_default_radius)
+    private var shadowXOffset = context.resources.getDimension(R.dimen.shadow_default_x_translation)
+    private var shadowYOffset = context.resources.getDimension(R.dimen.shadow_default_y_translation)
+    private var shadowColor = ContextCompat.getColor(context, R.color.shadow_default_color)
+    var hasShadow = false
+    private var foregroundPadding = 0
 
     private lateinit var foreground: ShapedView
-    private lateinit var shadowView: ImageView
 
+    private lateinit var shadowView: ImageView
     var isShadowDirty = true
 
     var containerReady = false
@@ -33,12 +39,24 @@ abstract class ViewShaper @JvmOverloads constructor(
     val viewsMap = mutableMapOf<View?, ViewGroup.LayoutParams?>()
 
     init {
-        shadowPaint.colorFilter = PorterDuffColorFilter(BLACK, PorterDuff.Mode.SRC_IN)
-        shadowPaint.alpha = 200
-
         val arr = context.obtainStyledAttributes(attrs, R.styleable.ViewShaper)
-        val elevation = arr.getDimensionPixelSize(R.styleable.ViewShaper_elevation, 0)
-        shadowOffset = arr.getDimension(R.styleable.ViewShaper_elevation, 0f)
+        shadowXOffset = arr.getDimension(R.styleable.ViewShaper_shadow_offset, shadowXOffset)
+        shadowYOffset = arr.getDimension(R.styleable.ViewShaper_shadow_offset, shadowYOffset)
+
+        foregroundPadding = arr.getDimensionPixelSize(R.styleable.ViewShaper_padding, 0)
+
+        if (arr.hasValue(R.styleable.ViewShaper_shadow_x_offset)){
+            shadowXOffset = arr.getDimension(R.styleable.ViewShaper_shadow_x_offset, shadowXOffset)
+        }
+
+        if (arr.hasValue(R.styleable.ViewShaper_shadow_y_offset)){
+            shadowYOffset = arr.getDimension(R.styleable.ViewShaper_shadow_y_offset, shadowYOffset)
+
+        }
+
+        shadowRadius = arr.getDimension(R.styleable.ViewShaper_shadow_radius, shadowRadius)
+
+        hasShadow = arr.getBoolean(R.styleable.ViewShaper_has_shadow, true)
 
         arr.recycle()
 
@@ -50,6 +68,37 @@ abstract class ViewShaper @JvmOverloads constructor(
 
     }
 
+    fun setShadowProperties(radius: Float = shadowRadius,
+                            xOffset: Float = shadowXOffset,
+                            yOffset: Float = shadowYOffset,
+                            color: Int = shadowColor,
+                            animateChange: Boolean = false){
+        if (animateChange.not()) {
+            shadowRadius = radius
+            shadowXOffset = xOffset
+            shadowYOffset = yOffset
+            shadowColor = color
+            isShadowDirty = true
+            generateShadow()
+        } else {
+            val oldRadius = shadowRadius
+            val oldXOffset = shadowXOffset
+            val oldYOffset = shadowYOffset
+            val oldColor = shadowColor
+            ObjectAnimator.ofFloat(0f, 1f).apply {
+                addUpdateListener {
+                    shadowRadius = oldRadius + (radius - oldRadius) * it.animatedFraction
+                    shadowXOffset = oldXOffset + (xOffset - oldXOffset) * it.animatedFraction
+                    shadowYOffset = oldYOffset + (yOffset - oldYOffset) * it.animatedFraction
+                    shadowColor = (oldColor + (color - oldColor) * it.animatedFraction).toInt()
+                    isShadowDirty = true
+                    generateShadow()
+                }
+                start()
+            }
+        }
+    }
+
     fun onShapeReady(){
         if (containerReady.not()) {
             shadowView = ImageView(context).apply {
@@ -59,7 +108,9 @@ abstract class ViewShaper @JvmOverloads constructor(
 
             foreground = ShapedView(context).apply {
                 shaper = getShaper()
-                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT).apply {
+                    setMargins(foregroundPadding, foregroundPadding, foregroundPadding, foregroundPadding)
+                }
             }
             super.addView(foreground)
 
@@ -67,8 +118,6 @@ abstract class ViewShaper @JvmOverloads constructor(
             onContainerReady()
         }
     }
-
-    abstract fun getShaper(): Shaper?
 
     override fun addView(child: View?, params: ViewGroup.LayoutParams?) {
         if (containerReady) {
@@ -95,38 +144,28 @@ abstract class ViewShaper @JvmOverloads constructor(
     }
 
     private fun generateShadow() {
-
-        if (isShadowDirty) {
+        if (isShadowDirty && hasShadow) {
 
             if (shadow == null) {
-                shadow = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8)
+                shadow = Bitmap.createBitmap(shadowView.width, shadowView.height, Bitmap.Config.ALPHA_8)
             } else {
                 shadow?.eraseColor(TRANSPARENT)
             }
             shadowPaint.apply {
-                setShadowLayer(shadowRadius, shadowOffset, shadowOffset,
-                        ContextCompat.getColor(context, R.color.shadow))
+                colorFilter = PorterDuffColorFilter(shadowColor, PorterDuff.Mode.SRC_IN)
+                setShadowLayer(shadowRadius, shadowXOffset, shadowYOffset, shadowColor)
             }
             val c = Canvas(shadow)
-            getShaper()?.getPath(foreground.width, foreground.height)?.let {
-                c.drawPath(it, shadowPaint)
+            getShaper()?.getPath(foreground.width, foreground.height)?.let { path->
+                path.offset(foregroundPadding.toFloat(), foregroundPadding.toFloat())
+                c.drawPath(path, shadowPaint)
                 shadowView.setImageBitmap(shadow)
                 isShadowDirty = false
             }
-
-//            val rs = RenderScript.create(context)
-//            val blur = ScriptIntrinsicBlur.create(rs, Element.U8(rs))
-//            val input = Allocation.createFromBitmap(rs, shadow)
-//            val output = Allocation.createTyped(rs, input.type)
-//            blur.setRadius(shadowRadius)
-//            blur.setInput(input)
-//            blur.forEach(output)
-//            output.copyTo(shadow)
-//            input.destroy()
-//            output.destroy()
-//            blur.destroy()
         }
     }
+
+    abstract fun getShaper(): Shaper?
 
     companion object {
         val TAG = "ShapedView"
