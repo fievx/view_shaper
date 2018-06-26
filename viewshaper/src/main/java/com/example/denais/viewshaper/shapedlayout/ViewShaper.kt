@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.example.denais.viewshaper.R
-abstract class ShapedLayout @JvmOverloads constructor(
+abstract class ViewShaper @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout (context, attrs, defStyleAttr) {
 
@@ -23,8 +23,8 @@ abstract class ShapedLayout @JvmOverloads constructor(
     private val shadowRadius = 10f
     private var shadowOffset = 0f
 
-    private val foreground: ShapedView
-    private val shadowView: ImageView
+    private lateinit var foreground: ShapedView
+    private lateinit var shadowView: ImageView
 
     var isShadowDirty = true
 
@@ -36,31 +36,39 @@ abstract class ShapedLayout @JvmOverloads constructor(
         shadowPaint.colorFilter = PorterDuffColorFilter(BLACK, PorterDuff.Mode.SRC_IN)
         shadowPaint.alpha = 200
 
-        val arr = context.obtainStyledAttributes(attrs, R.styleable.ShapedLayout)
-        val elevation = arr.getDimensionPixelSize(R.styleable.ShapedLayout_elevation, 0)
-        shadowOffset = arr.getDimension(R.styleable.ShapedLayout_elevation, 0f)
+        val arr = context.obtainStyledAttributes(attrs, R.styleable.ViewShaper)
+        val elevation = arr.getDimensionPixelSize(R.styleable.ViewShaper_elevation, 0)
+        shadowOffset = arr.getDimension(R.styleable.ViewShaper_elevation, 0f)
 
         arr.recycle()
 
-        shadowView = ImageView(context).apply {
-            layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        if(getShaper() != null){
+            onShapeReady()
         }
-        super.addView(shadowView)
-
-        foreground = ShapedView(context).apply {
-            shaper = getShaper()
-            layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        }
-        super.addView(foreground)
-
-        containerReady = true
-        onContainerReady()
 
         setWillNotDraw(false)
 
     }
 
-    abstract fun getShaper(): Shaper
+    fun onShapeReady(){
+        if (containerReady.not()) {
+            shadowView = ImageView(context).apply {
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+            super.addView(shadowView)
+
+            foreground = ShapedView(context).apply {
+                shaper = getShaper()
+                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            }
+            super.addView(foreground)
+
+            containerReady = true
+            onContainerReady()
+        }
+    }
+
+    abstract fun getShaper(): Shaper?
 
     override fun addView(child: View?, params: ViewGroup.LayoutParams?) {
         if (containerReady) {
@@ -100,9 +108,11 @@ abstract class ShapedLayout @JvmOverloads constructor(
                         ContextCompat.getColor(context, R.color.shadow))
             }
             val c = Canvas(shadow)
-            val shadowPath = getShaper().getPath(foreground.width, foreground.height).apply {
+            getShaper()?.getPath(foreground.width, foreground.height)?.let {
+                c.drawPath(it, shadowPaint)
+                shadowView.setImageBitmap(shadow)
+                isShadowDirty = false
             }
-            c.drawPath(shadowPath, shadowPaint)
 
 //            val rs = RenderScript.create(context)
 //            val blur = ScriptIntrinsicBlur.create(rs, Element.U8(rs))
@@ -115,10 +125,6 @@ abstract class ShapedLayout @JvmOverloads constructor(
 //            input.destroy()
 //            output.destroy()
 //            blur.destroy()
-
-            shadowView.setImageBitmap(shadow)
-
-            isShadowDirty = false
         }
     }
 

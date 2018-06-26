@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.denais.testapplication.TicketShapedLayout
+    <com.example.denais.testapplication.TicketViewShaper
         android:id="@+id/ticket"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,6 +36,6 @@
                 app:layout_constraintHorizontal_bias="0" />
         </android.support.constraint.ConstraintLayout>
 
-    </com.example.denais.testapplication.TicketShapedLayout>
+    </com.example.denais.testapplication.TicketViewShaper>
 
 </FrameLayout>

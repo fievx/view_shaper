@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ShapedLayout">
+    <declare-styleable name="ViewShaper">
         <attr name="android:layout_height"/>
         <attr name="android:layout_width"/>
         <attr name="elevation" format="dimension"/>
