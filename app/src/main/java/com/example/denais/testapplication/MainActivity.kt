@@ -1,10 +1,8 @@
 package com.example.denais.testapplication
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.widget.Button
 import com.example.denais.viewshaper.shapedlayout.ViewShaper
 
@@ -13,7 +11,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.fragment_list)
+        setContentView(R.layout.activity_main)
 
         val ticket = findViewById<ViewShaper>(R.id.ticket)
 
