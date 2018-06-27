@@ -28,16 +28,25 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:background="@color/colorAccent" />
 
-            <Button
-                android:id="@+id/bt_rotate"
+            <com.example.denais.testapplication.WeirdViewShaper
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ROTATE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_bias="0" />
+                app:padding="3dp">
+
+                <TextView
+                    android:id="@+id/bt_shadow"
+                    android:text="Animate Shadow"
+                    android:layout_height="50dp"
+                    android:layout_width="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:textColor="@color/black"/>
+            </com.example.denais.testapplication.WeirdViewShaper>
+
         </android.support.constraint.ConstraintLayout>
 
     </com.example.denais.testapplication.TicketViewShaper>
