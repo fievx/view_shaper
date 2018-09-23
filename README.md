@@ -94,7 +94,8 @@ And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper i
 ### Install:
 This library is available using jitpack. 
 
-Step 1. Add the JitPack repository to your build file 
+Step 1. Add the JitPack repository to your build file.
+
 Add it in your root build.gradle at the end of repositories:
 ```groovy
 allprojects {
@@ -111,3 +112,8 @@ dependencies {
         implementation 'com.github.fievx:view_shaper:v1.0.0'
 }
 ```
+### Note
+The idea for this library came when I hade to create a custom view shaped as a movie ticket. I realised that the usual methods were not sufficient for my needs. 
+
+You can find my research and thought process in a blog post I wrote when working on this custom view and library. 
+https://medium.com/@denais.jeremy/shaping-views-in-android-cheat-sheet-fd4687f5da5a
