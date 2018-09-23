@@ -12,7 +12,7 @@ Create a Custom View extending ViewShaper. ViewShaper has a method `abstract fun
 to return a Shaper. 
 
 Shaper is an Inerface: 
-```
+```kotlin
 interface Shaper {
     fun getPath(width: Int, height: Int): Path
 }
@@ -20,7 +20,7 @@ interface Shaper {
 
 So a simple implementation of a custom view overriding a ViewShaper could look like this: 
 
-```
+```kotlin
 class WeirdViewShaper @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewShaper(context, attrs, defStyleAttr) {
@@ -51,16 +51,7 @@ class WeirdViewShaper @JvmOverloads constructor(
 You now have a layout that will accept a single child (much like a ScrollView). This Single child can be a View or a ViewGroup.
 And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper is just a ViewGroup. 
 
-```
-<com.example.denais.testapplication.viewshaper.TicketViewShaper
-        android:id="@+id/ticket"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="30dp"
-        app:has_shadow="true"
-        app:padding="10dp"
-        >
-
+```XML
         <android.support.constraint.ConstraintLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
@@ -96,8 +87,6 @@ And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper i
             </com.example.denais.testapplication.viewshaper.WeirdViewShaper>
 
         </android.support.constraint.ConstraintLayout>
-
-    </com.example.denais.testapplication.viewshaper.TicketViewShaper>
    ```
     
 ![image](https://image.noelshack.com/fichiers/2018/31/3/1533075290-device-2018-07-31-230959.png)
