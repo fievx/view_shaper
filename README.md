@@ -90,4 +90,24 @@ And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper i
    ```
     
 ![image](https://image.noelshack.com/fichiers/2018/31/3/1533075290-device-2018-07-31-230959.png)
-   
+
+### Install:
+This library is available using jitpack. 
+
+Step 1. Add the JitPack repository to your build file 
+Add it in your root build.gradle at the end of repositories:
+```groovy
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+Step 2. Add the dependency
+```groovy
+dependencies {
+        implementation 'com.github.fievx:view_shaper:v1.0.0'
+}
+```
