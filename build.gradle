@@ -27,3 +27,8 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+wrapper {
+    gradleVersion = "7.4.2"
+    distributionType = Wrapper.DistributionType.ALL
+}
