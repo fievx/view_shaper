@@ -1,10 +1,9 @@
 package com.example.denais.testapplication
 
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.denais.viewshaper.shapedlayout.ViewShaper
 
 class MainActivity : AppCompatActivity() {

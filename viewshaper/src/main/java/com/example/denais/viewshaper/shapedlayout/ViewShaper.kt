@@ -1,20 +1,19 @@
 package com.example.denais.viewshaper.shapedlayout
 
+
 import android.animation.ObjectAnimator
 import android.content.Context
-
-
 import android.graphics.*
-import android.util.AttributeSet
-import android.graphics.Color.BLACK
 import android.graphics.Color.TRANSPARENT
 import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.support.v4.content.ContextCompat
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import com.example.denais.viewshaper.R
+
 abstract class ViewShaper @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout (context, attrs, defStyleAttr) {
@@ -102,13 +101,13 @@ abstract class ViewShaper @JvmOverloads constructor(
     fun onShapeReady(){
         if (containerReady.not()) {
             shadowView = ImageView(context).apply {
-                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             }
             super.addView(shadowView)
 
             foreground = ShapedView(context).apply {
                 shaper = getShaper()
-                layoutParams = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT).apply {
+                layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT).apply {
                     setMargins(foregroundPadding, foregroundPadding, foregroundPadding, foregroundPadding)
                 }
             }
@@ -145,22 +144,19 @@ abstract class ViewShaper @JvmOverloads constructor(
 
     private fun generateShadow() {
         if (isShadowDirty && hasShadow) {
-
-            if (shadow == null) {
-                shadow = Bitmap.createBitmap(shadowView.width, shadowView.height, Bitmap.Config.ALPHA_8)
-            } else {
-                shadow?.eraseColor(TRANSPARENT)
-            }
-            shadowPaint.apply {
-                colorFilter = PorterDuffColorFilter(shadowColor, PorterDuff.Mode.SRC_IN)
-                setShadowLayer(shadowRadius, shadowXOffset, shadowYOffset, shadowColor)
-            }
-            val c = Canvas(shadow)
-            getShaper()?.getPath(foreground.width, foreground.height)?.let { path->
-                path.offset(foregroundPadding.toFloat(), foregroundPadding.toFloat())
-                c.drawPath(path, shadowPaint)
-                shadowView.setImageBitmap(shadow)
-                isShadowDirty = false
+            with((shadow ?: Bitmap.createBitmap(shadowView.width, shadowView.height, Bitmap.Config.ALPHA_8).also { shadow = it })) {
+                eraseColor(TRANSPARENT)
+                shadowPaint.apply {
+                    colorFilter = PorterDuffColorFilter(shadowColor, PorterDuff.Mode.SRC_IN)
+                    setShadowLayer(shadowRadius, shadowXOffset, shadowYOffset, shadowColor)
+                }
+                val c = Canvas(this)
+                getShaper()?.getPath(foreground.width, foreground.height)?.let { path ->
+                    path.offset(foregroundPadding.toFloat(), foregroundPadding.toFloat())
+                    c.drawPath(path, shadowPaint)
+                    shadowView.setImageBitmap(shadow)
+                    isShadowDirty = false
+                }
             }
         }
     }

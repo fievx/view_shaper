@@ -52,7 +52,7 @@ You now have a layout that will accept a single child (much like a ScrollView). 
 And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper is just a ViewGroup. 
 
 ```XML
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             >
@@ -86,7 +86,7 @@ And you can obviously have a ViewShaper inside a ViewShaper since a ViewShaper i
                     android:padding="10dp"/>
             </com.example.denais.testapplication.viewshaper.WeirdViewShaper>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
    ```
     
 ![image](https://image.noelshack.com/fichiers/2018/31/3/1533075290-device-2018-07-31-230959.png)
@@ -107,9 +107,14 @@ allprojects {
 ```
 
 Step 2. Add the dependency
+
 ```groovy
 dependencies {
+        //Original library
         implementation 'com.github.fievx:view_shaper:v1.0.0'
+    
+        //This Fork (Updated Gradle, dependencies, and migrated to AndroidX)
+        implementation 'com.github.projectdelta6:view_shaper:v1.0.1'
 }
 ```
 ### Note
