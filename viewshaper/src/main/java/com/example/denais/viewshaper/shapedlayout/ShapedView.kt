@@ -1,7 +1,8 @@
 package com.example.denais.viewshaper.shapedlayout
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Path
 import android.util.AttributeSet
 import android.widget.FrameLayout
 
@@ -17,8 +18,8 @@ internal class ShapedView @JvmOverloads constructor(
     }
 
     override fun draw(canvas: Canvas) {
-        if (shapePath != null) {
-            canvas.clipPath(shapePath)
+        shapePath?.let { path ->
+            canvas.clipPath(path)
         }
         super.draw(canvas)
     }
