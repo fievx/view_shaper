@@ -1,13 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.61'
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha11'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -18,10 +19,16 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+wrapper {
+    gradleVersion = "8.1.4"
+    distributionType = Wrapper.DistributionType.ALL
 }
